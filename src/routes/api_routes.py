@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
-from datetime import date
+#from datetime import date
 
 # entities
-from models.entities.Client import Client
+#from models.entities.Client import Client
 
 # models
 from models.UserModel import UserModel
@@ -21,11 +21,20 @@ def login():
     req = request.json
 
     try:
-        user = UserModel.get_user(req['user_name'], req['password'])
+        user = UserModel.login(req['user_name'], req['password'])
         return jsonify(user)
     except Exception as ex:
         return jsonify({'message': str(ex)}), 500
-    
+
+@main.route("/users", methods=['GET'])
+def users():
+
+    try:
+        users = UserModel.get_users()
+        return jsonify(users)
+    except Exception as ex:
+        return jsonify({'message': str(ex)}), 500
+
 @main.route("/locations", methods=['GET'])
 def locations():
 

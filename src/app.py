@@ -7,9 +7,10 @@ from routes import api_routes
 from routes import ClientRoutes
 from routes import VehicleRoutes
 from routes import AppointmentRoutes
+from routes import SchedulingRoutes
 
 app = Flask(__name__)
-CORS(app, resources={"*":{"origins":"http://192.168.100.14:57280"}})
+CORS(app, resources={r"/api/*":{"origins":"http://192.168.100.14:8888"}})
 
 if __name__ == "__main__":
     #app.config.from_object(config['development'])
@@ -21,5 +22,7 @@ if __name__ == "__main__":
     app.register_blueprint(ClientRoutes.main, url_prefix='/api')
     app.register_blueprint(VehicleRoutes.main, url_prefix='/api')
     app.register_blueprint(AppointmentRoutes.main, url_prefix='/api')
+    app.register_blueprint(SchedulingRoutes.main, url_prefix='/api')
+    
     #app.run()
     app.run(debug=config['development'].DEBUG, port=config['development'].PORT, host=config['development'].HOST)

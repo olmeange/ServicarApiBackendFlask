@@ -15,14 +15,15 @@ def add_client():
 
     req = request.json
 
-    r_client = Client(str(uuid.uuid4()), req['first_name'], req['last_name'], req['address'], req['phone'], req['email'])
+    r_client = Client(str(uuid.uuid4()), first_name=req['first_name'], last_name=req['last_name'], address=req['address'], phone=req['phone'], email=req['email'], document_id=req['document_id'])
     print(r_client.to_JSON())
     try:
         affected_rows = ClientModel.add_client(r_client)
         if affected_rows == 1: 
             return jsonify({'message': 'Client added successfully', 'id': r_client.id})
     except Exception as ex:
-        return jsonify({'message': 'Error on insert'}), 500
+        return jsonify({'message': str(ex)}), 500
+        #return jsonify({'message': 'Error on insert'}), 500
 
 @main.route("/get_client/<id>", methods=['GET'])
 def get_client(id):
@@ -58,7 +59,7 @@ def delete_client(id):
 def update_client(id):
 
     req = request.json
-    r_client = Client(first_name=req['first_name'], last_name=req['last_name'], address=req['address'], phone=req['phone'], email=req['email'], id=id)
+    r_client = Client(first_name=req['first_name'], last_name=req['last_name'], address=req['address'], phone=req['phone'], email=req['email'], document_id=req['document_id'], client_code=req['client_code'], id=id)
     print(r_client.to_JSON())
     try:
         affected_rows = ClientModel.update_client(r_client)

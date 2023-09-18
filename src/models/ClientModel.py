@@ -8,9 +8,9 @@ class ClientModel():
         try:
             connection = get_connection()
             with connection.cursor() as cursor:
-                cursor.execute("""INSERT INTO clientes (id_cliente, nombre, apellido, direccion, telefono, email)  
-                               VALUES (%s, %s, %s, %s, %s, %s)""",
-                               (client.id, client.first_name, client.last_name, client.address, client.phone, client.email))
+                cursor.execute("""INSERT INTO clientes (id_cliente, nombre, apellido, direccion, telefono, email, cedula)  
+                               VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+                               (client.id, client.first_name, client.last_name, client.address, client.phone, client.email, client.document_id))
                 affected_rows = cursor.rowcount
                 connection.commit()
 
@@ -29,7 +29,7 @@ class ClientModel():
 
                 client = None
                 if row != None:
-                    client= Client(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+                    client= Client(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7])
                     client=client.to_JSON() 
 
             connection.close()
@@ -48,7 +48,7 @@ class ClientModel():
                 resultset = cursor.fetchall()
                 
                 for row in resultset:
-                    client= Client(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+                    client= Client(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7])
                     clients.append(client.to_JSON())             
             connection.close()
             return clients
@@ -74,8 +74,9 @@ class ClientModel():
         try:
             connection = get_connection()
             with connection.cursor() as cursor:
-                cursor.execute("""UPDATE clientes SET nombre=%s, apellido=%s, direccion=%s, telefono=%s, email=%s 
-                               WHERE id_cliente = %s""", (client.first_name, client.last_name, client.address, client.phone, client.email, client.id))
+                cursor.execute("""UPDATE clientes SET nombre=%s, apellido=%s, direccion=%s, telefono=%s, email=%s, cedula=%s, cod_cliente=%s 
+                               WHERE id_cliente = %s""", (client.first_name, client.last_name, client.address, client.phone, client.email, 
+                                                          client.document_id, client.client_code, client.id))
                 affected_rows = cursor.rowcount
                 connection.commit()
 
