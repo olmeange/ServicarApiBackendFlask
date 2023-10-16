@@ -54,6 +54,26 @@ class ClientModel():
             return clients
         except Exception as ex:
             raise Exception(ex)
+        
+    @classmethod
+    def get_clients_per_page(self, page):
+        elements_per_page = 10
+        offset = (int(page) - 1) * elements_per_page
+        try:
+            connection = get_connection()
+            clients=[]
+
+            with connection.cursor() as cursor:
+                cursor.execute(f'SELECT * FROM clientes LIMIT {elements_per_page} OFFSET {offset};')
+                resultset = cursor.fetchall()
+                
+                for row in resultset:
+                    client= Client(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7])
+                    clients.append(client.to_JSON())             
+            connection.close()
+            return clients
+        except Exception as ex:
+            raise Exception(ex)
 
     @classmethod
     def delete_client(self, id):

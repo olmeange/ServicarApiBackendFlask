@@ -8,7 +8,6 @@ class UserModel():
         try:
             connection = get_connection()
             with connection.cursor() as cursor:
-                #cursor.execute("SELECT id_usuario, user_name, nombre, apellido, password, id_sucursal FROM usuarios where user_name=%s and password=%s", (user_name, password))
                 cursor.execute("""select id_usuario, user_name, nombre, apellido, password, s.descripcion 
                                from usuarios u, sucursal s where u.id_sucursal  = s.id_sucursal and u.user_name=%s 
                                and u.password=%s""", (user_name, password))
@@ -37,4 +36,27 @@ class UserModel():
             connection.close()
             return users    
         except Exception as ex:
-            raise Exception(ex)       
+            raise Exception(ex)
+
+    @classmethod
+    def get_users_per_page(self, page):
+        elements_per_page = 10
+        offset = (int(page) - 1) * elements_per_page
+        
+        try:
+            connection = get_connection()
+            users=[]
+
+            with connection.cursor() as cursor:
+                cursor.execute("""select id_usuario, nombre, apellido, user_name, password, sucursal.descripcion from usuarios, sucursal where usuarios.id_sucursal = sucursal.id_sucursal 
+                               LIMIT %s OFFSET %s""",(elements_per_page, offset))
+                resultset = cursor.fetchall()
+                
+                for row in resultset:
+                    user= User(row[0], row[1], row[2], row[3], None, row[5])
+                    users.append(user.to_JSON())
+
+            connection.close()
+            return users    
+        except Exception as ex:
+            raise Exception(ex)          

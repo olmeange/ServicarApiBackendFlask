@@ -54,6 +54,27 @@ class VehicleModel():
             return vehicles
         except Exception as ex:
             raise Exception(ex)
+        
+    @classmethod
+    def get_vehicles_per_page(self, page):
+        elements_per_page = 10
+        offset = (int(page) - 1) * elements_per_page
+
+        try:
+            connection = get_connection()
+            vehicles=[]
+
+            with connection.cursor() as cursor:
+                cursor.execute(f'SELECT * FROM vehiculos LIMIT {elements_per_page} OFFSET {offset};')
+                resultset = cursor.fetchall()
+                
+                for row in resultset:
+                    vehicle= Vehicle(row[0], row[1], row[2], row[3], row[4], row[5])
+                    vehicles.append(vehicle.to_JSON())             
+            connection.close()
+            return vehicles
+        except Exception as ex:
+            raise Exception(ex)
 
     @classmethod
     def delete_vehicle(self, id):

@@ -1,6 +1,6 @@
 class Scheduling():
     def __init__(self, scheduling_id, user_id, scheduling_state, appointment_id:None, 
-                 scheduling_date:None, visible:bool, chassis_number, images, videos, finish_date, return_date, km, details, document, cost) -> None:
+                 scheduling_date:None, visible:bool, chassis_number, images:str, videos:str, finish_date, return_date, km, details, document, cost) -> None:
         self.id = scheduling_id
         self.user_id = user_id
         self.state = scheduling_state

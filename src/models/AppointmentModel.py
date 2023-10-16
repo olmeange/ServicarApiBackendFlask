@@ -83,6 +83,28 @@ class AppointmentModel():
             raise Exception(ex)
         
     @classmethod
+    def get_appointments_per_page(self, page):
+        elements_per_page = 10
+        offset = (int(page) - 1) * elements_per_page
+
+        try:
+            connection = get_connection()
+            appointments=[]
+
+            with connection.cursor() as cursor:
+                cursor.execute(f'SELECT * FROM citas LIMIT {elements_per_page} OFFSET {offset};')
+                resultset = cursor.fetchall()
+                
+                for row in resultset:
+                    appointment= Appointment(row[0], row[1], row[2], row[3], row[4], row[5], row[6],
+                                             row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14])
+                    appointments.append(appointment.to_JSON())             
+            connection.close()
+            return appointments
+        except Exception as ex:
+            raise Exception(ex)
+        
+    @classmethod
     def update_appointment(self, appointment: Appointment):
         try:
             connection = get_connection()
