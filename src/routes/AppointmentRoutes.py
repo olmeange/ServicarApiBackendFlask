@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template
 import uuid
 from datetime import date
 
@@ -27,6 +27,28 @@ def add_appointment():
         #return jsonify({'message': 'Error on insert'}), 500
         #return jsonify({'message': str(ex)}), 500
         return jsonify({'message': 'Internal server error', 'status_code': 1003}), 500
+    
+@main.route("/form")
+def appointment_form():
+    return render_template('appointment_form.html')
+
+@main.route("/add_appointment_from_client", methods=['POST'])
+def add_appointment_from_client():
+    r_appointment = Appointment(id=str(uuid.uuid4()), first_name=request.form['first_name'], last_name=request.form['last_name'], 
+                                document_id=request.form['document_id'], address=request.form['address'], email=request.form['email'], 
+                                phone=request.form['phone'], mark=request.form['mark'], model=request.form['model'], 
+                                plate=request.form['plate'], year=request.form['year'], location_id=request.form['location_id'], 
+                                mainteinance_id=request.form['mainteinance_id'], date=str(date.today()), visible=True)
+    print(r_appointment.to_JSON())
+    try:
+        affected_rows = AppointmentModel.add_appointment(r_appointment)
+        if affected_rows[0] == 1: 
+            return jsonify({'message': 'Appointment added successfully', 'id': r_appointment.id, 'status_code': 1000})
+    except Exception as ex:
+        #return jsonify({'message': 'Error on insert'}), 500
+        #return jsonify({'message': str(ex)}), 500
+        return jsonify({'message': 'Internal server error', 'status_code': 1003}), 500
+    #return "received"
 
 @main.route("/get_appointment/<id>", methods=['GET'])
 def get_appointment(id):
