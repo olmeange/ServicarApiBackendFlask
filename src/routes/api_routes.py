@@ -22,10 +22,22 @@ def login():
     
     try:
         user = UserModel.login(req['user_name'], req['password'])
-        return jsonify({'user': user, 'status_code': 1000})
+        return jsonify({'user': user,'status_code': 1000})
     except Exception as ex:
         #return jsonify({'message': str(ex)}), 500
         return jsonify({'message': 'User does not exist', 'status_code': 1001}), 500
+
+@main.route("/get_user/<id>", methods=['GET'])
+def get_user(id):
+    try:
+        user = UserModel.get_user(id)
+        if user != None: 
+            return jsonify({'user': user, 'status_code': 1000})
+        else:
+            return jsonify({'message': 'User does not exist', 'status_code': 1004})
+    except Exception as ex:
+        #return jsonify({'message': str(ex)}), 500
+        return jsonify({'message': 'Internal server error', 'status_code': 1003}), 500
 
 @main.route("/users", methods=['GET'])
 def users():

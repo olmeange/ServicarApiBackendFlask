@@ -1,5 +1,6 @@
 from database.db import get_connection
 from .entities.Appointment import Appointment
+from models.UserModel import UserModel
 import uuid
 
 class AppointmentModel():
@@ -55,7 +56,7 @@ class AppointmentModel():
                 appointment = None
                 if row != None:
                     appointment= Appointment(row[0], row[1], row[2], row[3], row[4], row[5], row[6],
-                                             row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14])
+                                             row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15])
                     appointment=appointment.to_JSON() 
 
             connection.close()
@@ -75,7 +76,7 @@ class AppointmentModel():
                 
                 for row in resultset:
                     appointment= Appointment(row[0], row[1], row[2], row[3], row[4], row[5], row[6],
-                                             row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14])
+                                             row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15])
                     appointments.append(appointment.to_JSON())             
             connection.close()
             return appointments
@@ -97,7 +98,7 @@ class AppointmentModel():
                 
                 for row in resultset:
                     appointment= Appointment(row[0], row[1], row[2], row[3], row[4], row[5], row[6],
-                                             row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14])
+                                             row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15])
                     appointments.append(appointment.to_JSON())             
             connection.close()
             return appointments
@@ -105,21 +106,75 @@ class AppointmentModel():
             raise Exception(ex)
         
     @classmethod
-    def update_appointment(self, appointment: Appointment):
+    def update_appointment(self, appointment: Appointment, user_id):
+
         try:
             connection = get_connection()
-            with connection.cursor() as cursor:                
-                cursor.execute("""UPDATE citas SET nombre_cliente=%s, apellido_cliente=%s, cedula=%s, direccion_cliente=%s, 
+            with connection.cursor() as cursor:
+                if UserModel.is_admin(user_id):
+                    print('Es admin')
+                    cursor.execute("""UPDATE citas SET nombre_cliente=%s, apellido_cliente=%s, cedula=%s, direccion_cliente=%s, 
+                               email_cliente=%s, telefono_cliente=%s, marca=%s, modelo=%s, chapa=%s, año=%s, id_sucursal=%s,
+                               id_mantenimiento=%s, visible=%s, id_usuario=%s WHERE id_cita = %s""", 
+                               (appointment.client_name, appointment.client_last_name, appointment.client_document_id, appointment.client_address, 
+                                appointment.client_email, appointment.client_phone, appointment.vehicle_mark,
+                                appointment.vehicle_model, appointment.vehicle_plate, appointment.vehicle_year, 
+                                appointment.location_id, appointment.mainteinance_id, appointment.visible, appointment.user_id, appointment.id))
+                else:
+                    print('No es admin')
+                    cursor.execute("""UPDATE citas SET nombre_cliente=%s, apellido_cliente=%s, cedula=%s, direccion_cliente=%s, 
                                email_cliente=%s, telefono_cliente=%s, marca=%s, modelo=%s, chapa=%s, año=%s, id_sucursal=%s,
                                id_mantenimiento=%s, visible=%s WHERE id_cita = %s""", 
                                (appointment.client_name, appointment.client_last_name, appointment.client_document_id, appointment.client_address, 
                                 appointment.client_email, appointment.client_phone, appointment.vehicle_mark,
                                 appointment.vehicle_model, appointment.vehicle_plate, appointment.vehicle_year, 
                                 appointment.location_id, appointment.mainteinance_id, appointment.visible, appointment.id))
+                
                 affected_rows = cursor.rowcount
                 connection.commit()
 
             connection.close()
             return affected_rows  
+        except Exception as ex:
+            raise Exception(ex)
+        
+    @classmethod
+    def get_appointments_user(self, user_id):
+        try:
+            connection = get_connection()
+            appointments=[]
+
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT * FROM citas where citas.id_usuario = %s", (user_id))
+                resultset = cursor.fetchall()
+                
+                for row in resultset:
+                    appointment= Appointment(row[0], row[1], row[2], row[3], row[4], row[5], row[6],
+                                             row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15])
+                    appointments.append(appointment.to_JSON())             
+            connection.close()
+            return appointments
+        except Exception as ex:
+            raise Exception(ex)
+
+    @classmethod
+    def get_appointments_user_per_page(self, user_id, page):
+        elements_per_page = 10
+        offset = (int(page) - 1) * elements_per_page
+
+        try:
+            connection = get_connection()
+            appointments=[]
+
+            with connection.cursor() as cursor:
+                cursor.execute(f'SELECT * FROM citas where citas.id_usuario = %s LIMIT {elements_per_page} OFFSET {offset};', (user_id))
+                resultset = cursor.fetchall()
+                
+                for row in resultset:
+                    appointment= Appointment(row[0], row[1], row[2], row[3], row[4], row[5], row[6],
+                                             row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15])
+                    appointments.append(appointment.to_JSON())             
+            connection.close()
+            return appointments
         except Exception as ex:
             raise Exception(ex)

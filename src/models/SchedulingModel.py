@@ -1,5 +1,4 @@
 import ast
-import itertools
 from database.db import get_connection
 from .entities.Scheduling import Scheduling
 

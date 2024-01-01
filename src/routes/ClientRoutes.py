@@ -55,7 +55,7 @@ def get_clients_page(page):
     try:
         clients = ClientModel.get_clients_per_page(page)
         if len(clients) != 0:
-            return jsonify({'clients': clients, 'status_code': 1000})
+            return jsonify({'message': 'Success', 'clients': clients, 'status_code': 1000})
         else:
             return jsonify({'message': 'No clients exist', 'status_code': 1004})
     except Exception as ex:

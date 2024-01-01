@@ -7,6 +7,7 @@ class Config:
     UPLOAD_FOLDER_IMG = '..\\uploads\\images'
     UPLOAD_FOLDER_VID = '..\\uploads\\videos'
     UPLOAD_FOLDER_DOC = '..\\uploads\\documents'
+    UPLOAD_FOLDER_THUMBNAIL = '..\\uploads\\thumbnails'
 
 class DevelopmentConfig(Config):
     DEBUG=True

@@ -54,7 +54,7 @@ def get_vehicles_per_page(page):
     try:
         vehicles = VehicleModel.get_vehicles_per_page(page)
         if len(vehicles) !=0:
-            return jsonify({'vehicles': vehicles, 'status_code': 1000})
+            return jsonify({'message':'Success', 'vehicles': vehicles, 'status_code': 1000})
         else:
             return jsonify({'message': 'No vehicles exist', 'status_code': 1004})
     except Exception as ex:

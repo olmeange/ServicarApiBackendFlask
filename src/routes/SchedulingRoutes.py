@@ -1,8 +1,9 @@
 import os
-from flask import Blueprint, jsonify, request, send_file, send_from_directory
+from flask import Blueprint, jsonify, request, send_file
 import uuid
 from datetime import date
 from config import config
+from moviepy.editor import *
 
 # entities
 from models.entities.Scheduling import Scheduling
@@ -57,11 +58,12 @@ def get_schedules_by_user():
     
 @main.route("/get_schedules_by_user/<page>", methods=['GET'])
 def get_schedules_by_user_per_page(page):
-    req = request.json
+    # cuando se usan parametros en los headers no se usa guion bajo
+    req = request.headers
     try:
-        schedules = SchedulingModel.get_schedules_by_user_per_page(req['user_id'], page)
+        schedules = SchedulingModel.get_schedules_by_user_per_page(str(req['userId']), page)
         if len(schedules) != 0:
-            return jsonify({'schedules': schedules, 'status_code': 1000})
+            return jsonify({'message':'Success','schedules': schedules, 'status_code': 1000})
         else:
             return jsonify({'message': 'No schedules exist', 'status_code': 1004})
     except Exception as ex:
@@ -160,13 +162,14 @@ def add_image(id):
 
     # validate non null fields is needed...
 
-    image_name = str(uuid.uuid4()) + '.jpg'  
+    image_name = str(uuid.uuid4())
+    image_name_ext = image_name + '.jpg'  
     try:
         affected_rows = SchedulingModel.add_image(image_name, id)
         if affected_rows == 1:
             # save image to storage
-            image.save(os.path.join(config['development'].UPLOAD_FOLDER_IMG, image_name))    
-            return jsonify({'message': 'Image added successfully', 'image': image_name, 'status_code': 1000})
+            image.save(os.path.join(config['development'].UPLOAD_FOLDER_IMG, image_name_ext))    
+            return jsonify({'message': 'Image added successfully', 'image': image_name_ext, 'status_code': 1000})
         #else:
         #    return jsonify({'message': 'No image added', 'status_code': 1006}), 404
     except Exception as ex:
@@ -213,14 +216,19 @@ def add_video(id):
     video = request.files['video']
 
     # validate non null fields is needed...
-
-    video_name = str(uuid.uuid4()) + '.mp4'  
+    video_name = str(uuid.uuid4())
+    video_name_ext = video_name + '.mp4'  
     try:
         affected_rows = SchedulingModel.add_video(video_name, id)
         if affected_rows == 1:
             # save video to storage
-            video.save(os.path.join(config['development'].UPLOAD_FOLDER_VID, video_name))    
-            return jsonify({'message': 'Video added successfully', 'video': video_name, 'status_code': 1000})
+            video.save(os.path.join(config['development'].UPLOAD_FOLDER_VID, video_name_ext))
+            
+            # getting thumbnail saved video
+            clip = VideoFileClip(config['development'].UPLOAD_FOLDER_VID + '\\' + video_name_ext)
+            clip.save_frame(config['development'].UPLOAD_FOLDER_THUMBNAIL + '\\' + video_name + '.jpg', t=1.00)
+
+            return jsonify({'message': 'Video added successfully', 'video': video_name_ext, 'status_code': 1000})
         #else:
         #    return jsonify({'message': 'No video added'}), 404
     except Exception as ex:
@@ -258,4 +266,9 @@ def add_document(id):
             return jsonify({'message': 'No document added', 'status_code': 1008}), 404
     except Exception as ex:
         #return jsonify({'message': str(ex)}), 500
-        return jsonify({'message': 'Internal server error', 'status_code': 1003}), 500          
+        return jsonify({'message': 'Internal server error', 'status_code': 1003}), 500
+
+# server sends processed or stored image to client
+@main.route('/thumbnail/<filename>', methods=['GET'])
+def send_thumbnail(filename:str):
+    return send_file(f'../uploads/thumbnails/{filename}')          

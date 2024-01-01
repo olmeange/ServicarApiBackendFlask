@@ -1,5 +1,5 @@
 class Appointment():
-    def __init__(self, id, first_name, last_name, address, email, phone, mark, model, plate, year, location_id, mainteinance_id, date, visible:bool, document_id) -> None:
+    def __init__(self, id, first_name, last_name, address, email, phone, mark, model, plate, year, location_id, mainteinance_id, date, visible:bool, document_id, user_id) -> None:
         self.id = id
 
         self.client_name = first_name
@@ -19,6 +19,8 @@ class Appointment():
 
         self.date = date
         self.visible = visible
+
+        self.user_id = user_id
     
     def to_JSON(self):
         return {
@@ -39,6 +41,7 @@ class Appointment():
                 'plate': self.vehicle_plate,
             },
 
+            'user_id': self.user_id, 
             'mainteinance_id': self.mainteinance_id,
             'location_id': self.location_id,
             'date': self.date,

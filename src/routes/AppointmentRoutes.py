@@ -17,7 +17,7 @@ def add_appointment():
     r_appointment = Appointment(id=str(uuid.uuid4()), first_name=req['first_name'], last_name=req['last_name'], 
                                 document_id=req['document_id'], address=req['address'], email=req['email'], phone=req['phone'],
                                 mark=req['mark'], model=req['model'], plate=req['plate'], year=req['year'], 
-                                location_id=req['location_id'], mainteinance_id=req['mainteinance_id'], date=str(date.today()), visible=True)
+                                location_id=req['location_id'], mainteinance_id=req['mainteinance_id'], date=str(date.today()), visible=True, user_id=req['user_id'])
     print(r_appointment.to_JSON())
     try:
         affected_rows = AppointmentModel.add_appointment(r_appointment)
@@ -79,7 +79,7 @@ def get_appointments_per_page(page):
     try:
         appointments = AppointmentModel.get_appointments_per_page(page)
         if len(appointments) != 0:
-            return jsonify({'appointments': appointments, 'status_code': 1000})
+            return jsonify({'message':'Success', 'appointments': appointments, 'status_code': 1000})
         else:
             return jsonify({'message': 'No appointments exist', 'status_code': 1004})
     except Exception as ex:
@@ -90,18 +90,45 @@ def get_appointments_per_page(page):
 def update_appointment(id):
 
     req = request.json
+    req_header = request.headers    
     r_appointment = Appointment(first_name=req['first_name'], last_name=req['last_name'], document_id= req['document_id'], 
                                 address=req['address'], email=req['email'], phone=req['phone'],
                                 mark=req['mark'], model=req['model'], plate=req['plate'], year=req['year'], 
                                 location_id=req['location_id'], mainteinance_id=req['mainteinance_id'], date=None, 
-                                visible=req['visible'], id=id)
+                                visible=req['visible'], id=id, user_id=req['user_id'])
     print(r_appointment.to_JSON())
     try:
-        affected_rows = AppointmentModel.update_appointment(r_appointment)
+        affected_rows = AppointmentModel.update_appointment(r_appointment, req_header['userId'])
         if affected_rows == 1: 
             return jsonify({'message': 'Appointment updated successfully', 'id': id, 'status_code': 1000})
         else:
             return jsonify({'message': 'No appointment updated', 'status_code': 1007}), 404
+    except Exception as ex:
+        return jsonify({'message': str(ex)}), 500
+        #return jsonify({'message': 'Internal server error', 'status_code': 1003}), 500
+    
+@main.route("/appointments_user", methods=['GET'])
+def get_appointments_user():
+    req = request.headers
+    try:
+        appointments = AppointmentModel.get_appointments_user(req['userId'])
+        if len(appointments) != 0:
+            return jsonify({'appointments': appointments, 'status_code': 1000})
+        else:
+            return jsonify({'message': 'No appointments exist', 'status_code': 1004})
+    except Exception as ex:
+        #return jsonify({'message': str(ex)}), 500
+        return jsonify({'message': 'Internal server error', 'status_code': 1003}), 500
+    
+@main.route("/appointments_user/<page>", methods=['GET'])
+def get_appointments_user_per_page(page):
+    req = request.headers
+    try:
+        appointments = AppointmentModel.get_appointments_user_per_page(req['userId'], page)
+        if len(appointments) != 0:
+            return jsonify({'message':'Success', 'appointments': appointments, 'status_code': 1000})
+        else:
+            return jsonify({'message': 'No appointments exist', 'status_code': 1004})
     except Exception as ex:
         #return jsonify({'message': str(ex)}), 500
         return jsonify({'message': 'Internal server error', 'status_code': 1003}), 500
