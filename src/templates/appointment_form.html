@@ -1,70 +1,73 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Servicar Mt</title>
-    <style>
-        body {
-            background-color: #00a2e8; /* Azul celeste */
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #00a2e8;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
-        }
-        h1 {
-            color: #fff; /* Azul celeste más oscuro */
-            text-align: center;
-        }
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        select {
-            width: 96%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #fff; /* Azul celeste más oscuro */
-            color: #00a2e8;
-            width: 100%;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin-top: 5px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Servicar Mt <BR> Reserva de Mantenimiento de Vehículo</h1>
-        <form action="/api/add_appointment_from_client" method="POST">
-            <input type="text" name="first_name" placeholder="Nombre" required>
-            <input type="text" name="last_name" placeholder="Apellido" required>
-            <input type="text" name="document_id" placeholder="Documento de identidad" required>
-            <input type="text" name="address" placeholder="Dirección" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="tel" name="phone" placeholder="Teléfono" required>
-            <input type="text" name="mark" placeholder="Marca" required>
-            <input type="text" name="model" placeholder="Modelo" required>
-            <input type="text" name="plate" placeholder="Chapa" required>
-            <input type="text" name="year" placeholder="Año" required>
-            <input type="text" name="location_id" placeholder="Sucursal" required>
-            <input type="text" name="mainteinance_id" placeholder="Tipo de Mantenimiento" required>
-            <button type="submit">Aceptar</button>
-        </form>    
-    </div>
-</body>
-</html>       
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Servicar MT</title>
+    <!---Custom CSS File--->
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+  </head>
+  <body>
+    <section class="container">
+      <header>Servicar MT</header>
+      <p>Formulario de reserva de vehículo</p>
+      <form action="/api/add_appointment_from_client" method="POST" class="form">
+        <div class="input-box">
+          <label>Datos del Cliente</label>
+          <div class="column">
+            <input type="text" name="first_name" placeholder="Nombre" required />
+            <input type="text" name="last_name" placeholder="Apellido" required />
+          </div>
+          <div class="column">
+            <input type="text" name="document_id" placeholder="CIN°" required />
+            <input type="text" name="address" placeholder="Dirección" required />
+          </div>
+          <div class="column">
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="tel" name="phone" placeholder="Teléfono" required />
+          </div>
+        </div>
+        <div class="input-box">
+          <label>Datos del vehículo</label>
+          <div class="column">
+            <input type="text" name="mark" placeholder="Marca" required />
+            <input type="text" name="model" placeholder="Modelo" required />
+          </div>
+          <div class="column">
+            <input type="text" name="plate" placeholder="Chapa" required />
+            <input type="text" name="year" placeholder="Año" required />
+          </div>
+        </div>
+        <div class="input-box address">
+          <label>Sucursal y Tipo de Mantenimiento</label>
+          <div class="column">
+            <div class="select-box">
+              <select name="location_id" required>
+                <option value="">Sucursal</option>
+                <option value="1">4 Mojones</option>
+                <option value="2">KM 5</option>
+                <option value="3">Mariano R Alonso</option>
+              </select>
+            </div>
+            <div class="select-box">
+              <select name="mainteinance_id" required>
+                <option value="">Mantenimiento</option>
+                <option value="1">Cambio de aceite</option>
+                <option value="2">Cambio de filtros</option>
+                <option value="3">Presión de llantas</option>
+                <option value="4">Alineación y balanceo</option>
+                <option value="5">Revisión de estado de batería</option>
+                <option value="6">Revisión de fluído de freno</option>
+                <option value="7">Mecánica ligera</option>
+                <option value="8">Revisión de amortiguadores</option>
+                <option value="9">Cambio de aceite de caja</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <button type="submit">Aceptar</button>
+      </form>
+    </section>
+  </body>
+</html>

@@ -30,12 +30,12 @@ class AppointmentModel():
                 connection.commit()
 
                 cursor.execute("""INSERT INTO citas (id_cita, nombre_cliente, apellido_cliente, direccion_cliente, 
-                               email_cliente, telefono_cliente, marca, modelo, chapa, año, id_sucursal, id_mantenimiento, fecha, visible, cedula) 
-                               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                               email_cliente, telefono_cliente, marca, modelo, chapa, año, id_sucursal, id_mantenimiento, fecha, visible, cedula, id_usuario) 
+                               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                                (appointment.id, appointment.client_name, appointment.client_last_name, appointment.client_address, 
                                 appointment.client_email, appointment.client_phone, appointment.vehicle_mark, appointment.vehicle_model, 
                                 appointment.vehicle_plate, appointment.vehicle_year, appointment.location_id, appointment.mainteinance_id,
-                                appointment.date, appointment.visible, appointment.client_document_id))
+                                appointment.date, appointment.visible, appointment.client_document_id, appointment.user_id))
                 affected_rows2 = cursor.rowcount
                 connection.commit()
 

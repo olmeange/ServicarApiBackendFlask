@@ -38,7 +38,7 @@ def add_appointment_from_client():
                                 document_id=request.form['document_id'], address=request.form['address'], email=request.form['email'], 
                                 phone=request.form['phone'], mark=request.form['mark'], model=request.form['model'], 
                                 plate=request.form['plate'], year=request.form['year'], location_id=request.form['location_id'], 
-                                mainteinance_id=request.form['mainteinance_id'], date=str(date.today()), visible=True)
+                                mainteinance_id=request.form['mainteinance_id'], date=str(date.today()), visible=True, user_id="0")
     print(r_appointment.to_JSON())
     try:
         affected_rows = AppointmentModel.add_appointment(r_appointment)
